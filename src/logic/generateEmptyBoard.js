@@ -7,6 +7,10 @@ export default function generateEmptyBoard() {
 				x: c,
 				y: r,
 				value: "",
+				potentialValues: [],
+				color: "",
+				backgroundColor: "",
+				potentialCell: true,
 			};
 		}
 	}

@@ -1,28 +1,23 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
 // import components here:
 import Header from "./components/organisms/Header";
+import Footer from "./components/organisms/Footer";
 import ToDo from "./components/molecules/ToDo";
 import Board from "./components/organisms/Board";
 import Button from "./components/atoms/Button";
 // import app logic here:
 import generateEmptyBoard from "./logic/generateEmptyBoard";
+import generateBoxes from "./logic/generateBoxes";
+// import algorithm logic here:
+import solveSudoku from "./algorithm/solveSudoku";
+// import template sudoku:
+import { TEMPLATE_SUDOKU } from "./templateSudokus";
 
 export default function App() {
-	const [mode, setMode] = useState("set");
+	const [mode, setMode] = useState("run"); // change to "set" after tests
 	const [board, setBoard] = useState();
 	const [todo, setTodo] = useState();
-	const [btnText, setBtnText] = useState();
-
-	// generate board:
-	useEffect(() => {
-		if (!board || (board && !board.length)) {
-			const board = generateEmptyBoard();
-			setBoard(board);
-			console.log("board was generated:", board);
-		}
-	}, [board]);
 
 	// init mode:
 	useEffect(() => {
@@ -33,13 +28,26 @@ export default function App() {
       When you finish, click the button below the board.
       `;
 			setTodo(todo);
-			const btnText = "Save the board & run solving algorithm";
-			setBtnText(btnText);
 		} else {
 			setTodo();
-			setBtnText();
+			//console.log("run mode board:", JSON.stringify(board));
 		}
-	}, [mode]);
+	}, [mode, board]);
+
+	// generate (& populate) board:
+	useEffect(() => {
+		if (!board || (board && !board.length)) {
+			// generate empty board:
+			const board = generateEmptyBoard();
+			// generate board from the template:
+			//const board = TEMPLATE_SUDOKU;
+			setBoard(board);
+			console.log("board was generated:", board);
+		} else {
+			// delete this after tests !!!
+			setBoard(TEMPLATE_SUDOKU);
+		}
+	}, [board]);
 
 	return (
 		<div className="App">
@@ -47,15 +55,26 @@ export default function App() {
 			<main>
 				<ToDo todo={todo} />
 				<Board board={board} mode={mode} setBoard={setBoard} />
-				{btnText && (
+				{mode === "set" && (
 					<Button
-						text={btnText}
+						text="save the board & run solving algorithm"
 						onClick={() => {
 							setMode("run");
 						}}
 					/>
 				)}
+				{mode === "run" && (
+					<Button
+						text="run algorithm"
+						onClick={() => {
+							//console.log("run!");
+							const solvedSudoku = solveSudoku(board);
+							setBoard(solvedSudoku);
+						}}
+					/>
+				)}
 			</main>
+			<Footer />
 		</div>
 	);
 }

@@ -3,28 +3,59 @@ import Square from "../atoms/Square";
 import Input from "../atoms/Input";
 
 export default function Board({ board, mode, setBoard }) {
-	// check if board object was passed through props
+	//check if board object was passed through props
 	// useEffect(() => {
 	//   if (board) {
-	//     console.log("Board:", board);
+	//     console.log("Board passed to <Board />:", board);
 	//   } else {
 	//     console.log("No board was passed to the <Board />...");
 	//   }
 	// }, [board]);
 
-	function handleInputChange(value, r, c) {
-		const allowedValues = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-		for (let n = 0; n < allowedValues.length; n++) {
-			if (value === allowedValues[n]) {
-				const updatedBoard = [...board];
-				updatedBoard[r] = [...updatedBoard[r]];
-				updatedBoard[r][c] = {
-					...updatedBoard[r][c],
-					value: value,
-				};
-				setBoard(updatedBoard);
-			}
+	// generate borders for boxes:
+	function generateStyle(r, c) {
+		const borderStyle = "3px solid black";
+		let style = {};
+		// borderTop for:
+		if (r === 0 || r === 3 || r === 6) {
+			style = {
+				...style,
+				borderTop: borderStyle,
+			};
 		}
+		// borderBottom for:
+		if (r === 8) {
+			style = {
+				...style,
+				borderBottom: borderStyle,
+			};
+		}
+		// borderLeft for:
+		if (c === 0 || c === 3 || c === 6) {
+			style = {
+				...style,
+				borderLeft: borderStyle,
+			};
+		}
+		// borderRight for:
+		if (c === 8) {
+			style = {
+				...style,
+				borderRight: borderStyle,
+			};
+		}
+		return style;
+	}
+
+	function handleInputChange(value, r, c) {
+		const updatedBoard = [...board];
+		updatedBoard[r] = [...updatedBoard[r]];
+		updatedBoard[r][c] = {
+			...updatedBoard[r][c],
+			value: value,
+			color: "black",
+		};
+		setBoard(updatedBoard);
 	}
 
 	if (!board)
@@ -39,13 +70,17 @@ export default function Board({ board, mode, setBoard }) {
 			<div className="board">
 				{board.map((row, r) => (
 					<div key={"row-" + r}>
-						{row.map((col, c) => (
-							<Input
-								key={"col-" + c}
-								value={col.value}
-								onChange={(value) => handleInputChange(value, r, c)}
-							/>
-						))}
+						{row.map((col, c) => {
+							const generatedStyle = generateStyle(r, c);
+							return (
+								<Input
+									key={"col-" + c}
+									value={col.value}
+									onChange={(value) => handleInputChange(value, r, c)}
+									style={generatedStyle}
+								/>
+							);
+						})}
 					</div>
 				))}
 			</div>
@@ -56,9 +91,12 @@ export default function Board({ board, mode, setBoard }) {
 			<tbody>
 				{board.map((row, r) => (
 					<tr key={"row-" + r}>
-						{row.map((col, c) => (
-							<Square key={"col-" + c} sq={col} />
-						))}
+						{row.map((col, c) => {
+							const generatedStyle = generateStyle(r, c);
+							return (
+								<Square key={"col-" + c} sq={col} style={generatedStyle} />
+							);
+						})}
 					</tr>
 				))}
 			</tbody>
