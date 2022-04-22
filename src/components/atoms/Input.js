@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 
-export default function Input({ initValue, onChange = (f) => f }) {
+export default function Input({ initValue, onChange = (f) => f, style }) {
 	const [value, setValue] = useState("");
+
+	function handleChange(e) {
+		const value = e.target.value;
+		const allowedValues = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+		for (let n = 0; n < allowedValues.length; n++) {
+			if (value === allowedValues[n]) {
+				setValue(value);
+			}
+		}
+	}
 
 	useEffect(() => {
 		if (initValue && initValue.length && initValue !== "") {
@@ -13,7 +23,6 @@ export default function Input({ initValue, onChange = (f) => f }) {
 
 	useEffect(() => {
 		if (value) {
-			//=================== check if allowed !!!
 			onChange(value);
 		}
 	}, [value, onChange]);
@@ -23,7 +32,8 @@ export default function Input({ initValue, onChange = (f) => f }) {
 			type="text"
 			maxLength="1"
 			value={value}
-			onChange={(e) => setValue(e.target.value)}
+			onChange={handleChange}
+			style={style}
 		/>
 	);
 }

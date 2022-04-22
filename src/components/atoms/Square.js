@@ -1,4 +1,10 @@
-export default function Square({ sq }) {
+export default function Square({ sq, style }) {
 	if (!sq) return null;
-	return <td>{sq.value}</td>;
+	return (
+		<td
+			style={{ ...style, color: sq.color, backgroundColor: sq.backgroundColor }}
+		>
+			{sq.value}
+		</td>
+	);
 }
