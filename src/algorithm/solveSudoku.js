@@ -3,8 +3,8 @@ import findNumber from "./findNumber";
 export default function solveSudoku(board) {
 	let solvedSudoku = [...board];
 	// check the frequency of appearance of each number & sort numbers in ascending order:
-	const numbers = ["8"];
-	// iterate through sorted numbers & search for each number
+	const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+	//iterate through sorted numbers & search for each number
 	for (let n = 0; n < numbers.length; n++) {
 		solvedSudoku = findNumber(numbers[n], solvedSudoku);
 	}

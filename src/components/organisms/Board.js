@@ -54,6 +54,9 @@ export default function Board({ board, mode, setBoard }) {
 			...updatedBoard[r][c],
 			value: value,
 			color: "black",
+			potentialValues: [],
+			backgroundColor: "",
+			potentialCell: true,
 		};
 		setBoard(updatedBoard);
 	}
