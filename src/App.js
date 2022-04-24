@@ -22,7 +22,7 @@ const TEMPLATE_SUDOKUS = [
 ];
 
 export default function App() {
-	const [mode, setMode] = useState("set"); // change to "set" after tests
+	const [mode, setMode] = useState("set");
 	const [board, setBoard] = useState();
 	const [todo, setTodo] = useState();
 	const [templateNum, setTemplateNum] = useState(0);
@@ -31,16 +31,21 @@ export default function App() {
 	useEffect(() => {
 		if (mode === "set") {
 			const todo = `
-      Populate the board with known numbers by inputing them into the cells.
-      You can input only one number in one cell. Allowed numbers are: 1, 2, 3, 4, 5, 6, 7, 8, 9.
-      When you finish, click the button below the board.
-      `;
+				Populate the board with the numbers from sudoku you want to solve by inputing them into the cells.
+				You can input only one number in one cell. Allowed numbers are: 1, 2, 3, 4, 5, 6, 7, 8, 9.
+				When you finish, click the "save board" button below the board.
+			`;
 			setTodo(todo);
+			const board = generateEmptyBoard();
+			setBoard(board);
 		} else {
-			setTodo();
-			console.log("run mode board:", JSON.stringify(board));
+			const todo = `
+				Click "solve sudoku" or "set next sudoku" button below the board.
+			`;
+			setTodo(todo);
+			//console.log("run mode board:", JSON.stringify(board));
 		}
-	}, [mode, board]);
+	}, [mode]);
 
 	// generate board:
 	useEffect(() => {
@@ -86,17 +91,17 @@ export default function App() {
 				{mode === "run" && (
 					<div className="run-mode-buttons">
 						<Button
+							text="set next sudoku"
+							onClick={() => {
+								setMode("set");
+							}}
+						/>
+						<Button
 							text="solve sudoku"
 							style={{ backgroundColor: "green", color: "white" }}
 							onClick={() => {
 								const solvedSudoku = solveSudoku(board);
 								setBoard(solvedSudoku);
-							}}
-						/>
-						<Button
-							text="set next sudoku"
-							onClick={() => {
-								setMode("set");
 							}}
 						/>
 					</div>
