@@ -1,17 +1,7 @@
-import { useEffect, useState } from "react";
 import Square from "../atoms/Square";
 import Input from "../atoms/Input";
 
 export default function Board({ board, mode, setBoard }) {
-	//check if board object was passed through props
-	// useEffect(() => {
-	//   if (board) {
-	//     console.log("Board passed to <Board />:", board);
-	//   } else {
-	//     console.log("No board was passed to the <Board />...");
-	//   }
-	// }, [board]);
-
 	// generate borders for boxes:
 	function generateStyle(r, c) {
 		const borderStyle = "3px solid black";
@@ -54,6 +44,9 @@ export default function Board({ board, mode, setBoard }) {
 			...updatedBoard[r][c],
 			value: value,
 			color: "black",
+			potentialValues: [],
+			backgroundColor: "",
+			potentialCell: true,
 		};
 		setBoard(updatedBoard);
 	}
