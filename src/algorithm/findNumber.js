@@ -7,52 +7,48 @@ import generateBoxes from "../logic/generateBoxes";
 // then return the fulfilled board & search for a next number
 
 export default function findNumber(number, board) {
-	console.log("number passed to findNumber function:", number);
-	console.log("board passed to findNumber function:", board);
-	const boxes = generateBoxes();
 	let updatedBoard = [...board];
 	// reset board:
-	for (let r = 0; r < 9; r++) {
-		for (let c = 0; c < 9; c++) {
-			updatedBoard[r][c].potentialCell = true;
-			updatedBoard[r][c].backgroundColor = "";
-		}
-	}
+	updatedBoard.forEach((row) => {
+		row.forEach((cell) => (cell.potentialCell = true));
+	});
+	// initiate potential cells array
 	let potentialCells = [];
 	// eliminate existing numbers:
-	for (let r = 0; r < 9; r++) {
-		for (let c = 0; c < 9; c++) {
-			if (updatedBoard[r][c].value) {
-				//updatedBoard[r][c].backgroundColor = "orange";
-				updatedBoard[r][c].potentialCell = false;
-			}
-		}
-	}
-	// eliminate rows:
-	for (let r = 0; r < 9; r++) {
-		for (let c = 0; c < 9; c++) {
-			if (updatedBoard[r][c].value === number) {
+	updatedBoard.forEach((row) => {
+		row.forEach((cell) => {
+			if (cell.value) cell.potentialCell = false;
+		});
+	});
+	// eliminate rows & cols:
+	updatedBoard.forEach((row) =>
+		row.forEach((cell, c) => {
+			if (cell.value === number) {
 				// block row:
-				for (let i = 0; i < 9; i++) {
-					//updatedBoard[r][i].backgroundColor = "orange";
-					updatedBoard[r][i].potentialCell = false;
-				}
+				row.forEach((cell) => (cell.potentialCell = false));
+				// block col:
+				updatedBoard.forEach((ROW) =>
+					ROW.forEach((CELL, C) => {
+						if (c === C) CELL.potentialCell = false;
+					})
+				);
 			}
-		}
-	}
-	// eliminate cols:
-	for (let r = 0; r < 9; r++) {
-		for (let c = 0; c < 9; c++) {
-			if (updatedBoard[r][c].value === number) {
-				// block row:
-				for (let i = 0; i < 9; i++) {
-					//updatedBoard[i][c].backgroundColor = "orange";
-					updatedBoard[i][c].potentialCell = false;
-				}
-			}
-		}
-	}
+		})
+	);
 	// eliminate boxes:
+	const boxes = generateBoxes();
+	// updatedBoard.forEach(row => row.forEach(cell => {
+	// 	if (cell.value === number) {
+	// 		// block box:
+	// 		boxes.forEach((box, b) => box.forEach(boxCell => {
+	// 			if (boxCell.x === cell.x && boxCell.y === cell.y) {
+	// 				boxes.forEach((BOX, B) => BOX.forEach(BOXCELL => {
+	// 					if (b === B) BOXCELL.potentialCell = false
+	// 				}))
+	// 			}
+	// 		}))
+	// 	}
+	// }))
 	for (let r = 0; r < 9; r++) {
 		for (let c = 0; c < 9; c++) {
 			if (updatedBoard[r][c].value === number) {
@@ -74,17 +70,16 @@ export default function findNumber(number, board) {
 		}
 	}
 	// show & save potential cells:
-	for (let r = 0; r < 9; r++) {
-		for (let c = 0; c < 9; c++) {
-			if (updatedBoard[r][c].potentialCell) {
-				//updatedBoard[r][c].backgroundColor = "green";
-				potentialCells.push({ x: c, y: r });
+	updatedBoard.forEach((row) => {
+		row.forEach((cell) => {
+			if (cell.potentialCell) {
+				potentialCells.push({ x: cell.x, y: cell.y });
 			}
-		}
-	}
+		});
+	});
 	// if there are potentialCells, check if there are singlePotentialCells in them:
 	if (potentialCells.length) {
-		console.log("potential cells for number", number, ":", potentialCells);
+		//console.log("potential cells for number", number, ":", potentialCells);
 		// check every box & find if there is only one potential cell
 		for (let i = 0; i < 9; i++) {
 			let potentialCellsInBox = [];
@@ -101,14 +96,14 @@ export default function findNumber(number, board) {
 					}
 				}
 			}
-			console.log("potential cells in box:", i, potentialCellsInBox);
+			//console.log("potential cells in box:", i, potentialCellsInBox);
 			if (potentialCellsInBox.length === 1) {
 				// if there is only one potential cell in a box,
-				console.log(
-					"There is only one potential cell for a box:",
-					i,
-					potentialCellsInBox[0]
-				);
+				// console.log(
+				// 	"There is only one potential cell for a box:",
+				// 	i,
+				// 	potentialCellsInBox[0]
+				// );
 				// put the number there
 				const foundNumberCoords = potentialCellsInBox[0];
 				updatedBoard[foundNumberCoords.y][foundNumberCoords.x].value = number;
@@ -118,7 +113,7 @@ export default function findNumber(number, board) {
 		}
 	} else {
 		// if there are no potentialCells:
-		console.log("There are no potential cells for number", number);
+		//console.log("There are no potential cells for number", number);
 	}
 	return updatedBoard;
 }

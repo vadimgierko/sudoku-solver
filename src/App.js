@@ -29,33 +29,24 @@ export default function App() {
 
 	// init mode:
 	useEffect(() => {
+		let todo = ``;
 		if (mode === "set") {
-			const todo = `
+			todo = `
 				Populate the board with the numbers from sudoku you want to solve by inputing them into the cells.
 				You can input only one number in one cell. Allowed numbers are: 1, 2, 3, 4, 5, 6, 7, 8, 9.
 				When you finish, click the "save board" button below the board.
 			`;
-			setTodo(todo);
 			const board = generateEmptyBoard();
+			console.log("Empty board was generated.");
 			setBoard(board);
 		} else {
-			const todo = `
+			todo = `
 				Click "solve sudoku" or "set next sudoku" button below the board.
 			`;
-			setTodo(todo);
 			//console.log("run mode board:", JSON.stringify(board));
 		}
+		setTodo(todo);
 	}, [mode]);
-
-	// generate board:
-	useEffect(() => {
-		if (!board || (board && !board.length)) {
-			// generate empty board:
-			const board = generateEmptyBoard();
-			setBoard(board);
-			console.log("empty board was generated:", board);
-		}
-	}, [board]);
 
 	return (
 		<div className="App">

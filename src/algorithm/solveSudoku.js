@@ -1,34 +1,53 @@
 import findNumber from "./findNumber";
+import orderNumbers from "./orderNumbers";
 
-export default function solveSudoku(board) {
-	const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+export default function solveSudoku(board, emptyCellsFromPrevIteration) {
 	let solvedSudoku = [...board];
-	// check the frequency of appearance of each number & sort numbers in ascending order:
-	//
-	//iterate through sorted numbers & search for each number
-	for (let n = 0; n < numbers.length; n++) {
-		solvedSudoku = findNumber(numbers[n], solvedSudoku);
-	}
-	// check if all cells have values, if not - run algorithm again
-	for (let r = 0; r < 9; r++) {
-		for (let c = 0; c < 9; c++) {
-			if (!solvedSudoku[r][c].value) {
-				console.log(
-					"There are still values missing... Run the algorithm again!"
-				);
-				solveSudoku(solvedSudoku);
-				// this is tricky...
-				// if you'll make an mistake in inputed sudoku
-				// or input the sudoku that is impossible to solve
-				// this will cause an infinite loop...
-				// possible solution: save all missing values & pass it
-				// then if sudoku will not be solved again in next loop
-				// compare saved missing values =>
-				// if they are the same => do not continue the loop ;-)
-			}
+	// order numbers in order of appearance
+	// (this will minimize the number of algorithm loops)
+	const orderedNumbers = orderNumbers(board);
+	// iterate through sorted numbers & search for each number
+	orderedNumbers.forEach(
+		(number) => (solvedSudoku = findNumber(number, solvedSudoku))
+	);
+	console.log(
+		"Algorithm has iterated through all ordered numbers:",
+		orderedNumbers
+	);
+	// check if all cells have values assigned,
+	// push cells without values into an array
+	let cellsWithoutValue = [];
+	solvedSudoku.forEach((row) => {
+		row.forEach((cell) => {
+			!cell.value && cellsWithoutValue.push({ x: cell.x, y: cell.y });
+		});
+	});
+
+	// check, if there are values missing
+	if (cellsWithoutValue.length) {
+		// if true, check if those values are equal to passed missing values from previous iteration:
+		// if true, stop the algorithm - there will be no more discovered numbers - sudoku cannot be solved
+		// if not, run algorithm again
+		if (
+			emptyCellsFromPrevIteration &&
+			emptyCellsFromPrevIteration.length === cellsWithoutValue.length
+		) {
+			// if the length of emptyCellsFromPrevIteration & cellsWithoutValue are equal
+			// that means that they are the same
+			// there will be no more discovered numbers - sudoku cannot be solved
+			// stop algorithm
+			const message =
+				"Empty cells passed from prev iteration are the same as empty values from this iteration... That means that this sudoku is too hard too solve for this algorithm or maybe there is a mistake in the board...";
+			console.log(message);
+			alert(message);
+		} else {
+			// empty cells from previous iteration are different from empty cells in this iteration,
+			// so run algorithm again, until all the values will be discovered
+			console.log("There are still numbers to discover. Run algorithm again!");
+			solvedSudoku = solveSudoku(solvedSudoku, cellsWithoutValue);
 		}
+	} else {
+		console.log("All the numbers were discovered. Sudoku is solved!");
 	}
-	// iterate until there will be no numbers to discover
-	console.log("Sudoku is solved!");
 	return solvedSudoku;
 }
