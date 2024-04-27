@@ -1,11 +1,15 @@
 export default function Footer() {
+	const currentDate = new Date();
+	const currentYear = currentDate.getFullYear();
+
 	return (
 		<footer>
 			<hr />
-			created by{" "}
+			&copy;{" "}
 			<a href="https://github.com/vadimgierko" target="_blank" rel="noreferrer">
 				Vadim Gierko
-			</a>
+			</a>{" "}
+			2022-{currentYear}
 		</footer>
 	);
 }

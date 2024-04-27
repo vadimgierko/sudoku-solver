@@ -1,6 +1,18 @@
-.App {
+body {
+  margin: 0;
+  padding: 0;
   font-family: sans-serif;
   text-align: center;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;  
+}
+
+main {
+  flex-grow: 1;
 }
 
 table {
