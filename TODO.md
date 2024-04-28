@@ -1,0 +1,10 @@
+- rewrite the app in TypeScript
+- add About page
+- generate more template sudokus
+- enable displaying all steps taken to solve sudoku & controlled setInterval to show the process
+- enable user control over the taken steps & choosing/ applying them
+- fix board size while completing the board & after saving (it must be same size & be in same place - no bouncing)
+- enable navigating using keybord while inputing numbers into the board
+- develop algorithms for more advanced sudokus
+- fix infinite loop while inputing numbers into the board (the bug does not crash the app, but still the loop runs while inputing, what can be seen in the console...)
+- develop algorithm for generating sudoku...

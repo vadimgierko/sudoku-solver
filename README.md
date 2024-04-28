@@ -1,9 +1,15 @@
-# Sudoku Solver by Vadim Gierko
+# Sudoku Solver
 
-This will be the app, which will be able to solve a sudoku. The app development is in progress...
+This app solves an easy sudoku.
 
-At the moment:
-- [X] UI & app structure set
-- [X] the app generates empty board
-- [X] you can input known (init) numbers of sudoku you want to solve
-- [X] you can save the board
+⚠️ At the moment I&apos;m working on more advanced algorithm, which will be able to solve more comlicated sudoku.
+
+## Features
+
+- you can input known (init) numbers of sudoku you want to solve, save the board & click *solve* button
+- you can load template sudoku to test the app
+
+## Tech Stack
+
+- React
+- Next.js
