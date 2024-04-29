@@ -1,4 +1,12 @@
-export default function Square({ sq, style }) {
+import { Cell } from "@/types";
+
+export default function Square({
+	sq,
+	style,
+}: {
+	sq: Cell;
+	style: React.CSSProperties;
+}) {
 	if (!sq) return null;
 	return (
 		<td
