@@ -19,17 +19,18 @@ import Button from "@/components/atoms/Button";
 import { TEMPLATE_SUDOKU_0 } from "@/template-sudoku/0";
 import { TEMPLATE_SUDOKU_1 } from "@/template-sudoku/1";
 import { TEMPLATE_SUDOKU_2 } from "@/template-sudoku/2";
+import { Board as IBoard } from "@/types";
 
-const TEMPLATE_SUDOKUS = [
+const TEMPLATE_SUDOKUS: IBoard[] = [
 	TEMPLATE_SUDOKU_0,
 	TEMPLATE_SUDOKU_1,
 	TEMPLATE_SUDOKU_2,
 ];
 
 export default function Home() {
-	const [mode, setMode] = useState("set");
-	const [board, setBoard] = useState();
-	const [todo, setTodo] = useState();
+	const [mode, setMode] = useState<"set" | "run">("set");
+	const [board, setBoard] = useState<IBoard | null>(null);
+	const [todo, setTodo] = useState<string>("");
 	const [templateNum, setTemplateNum] = useState(0);
 
 	// init mode:
@@ -52,6 +53,8 @@ export default function Home() {
 		}
 		setTodo(todo);
 	}, [mode]);
+
+	if (!board) return null;
 
 	return (
 		<>
