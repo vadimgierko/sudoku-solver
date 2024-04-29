@@ -1,7 +1,11 @@
+import { Board, Cell } from "@/types";
 import findNumber from "./findNumber";
 import orderNumbers from "./orderNumbers";
 
-export default function solveSudoku(board, emptyCellsFromPrevIteration) {
+export default function solveSudoku(
+	board: Board,
+	emptyCellsFromPrevIteration: { x: number; y: number }[]
+) {
 	let solvedSudoku = [...board];
 	// order numbers in order of appearance
 	// (this will minimize the number of algorithm loops)
@@ -16,7 +20,7 @@ export default function solveSudoku(board, emptyCellsFromPrevIteration) {
 	);
 	// check if all cells have values assigned,
 	// push cells without values into an array
-	let cellsWithoutValue = [];
+	let cellsWithoutValue: { x: number; y: number }[] = [];
 	solvedSudoku.forEach((row) => {
 		row.forEach((cell) => {
 			!cell.value && cellsWithoutValue.push({ x: cell.x, y: cell.y });

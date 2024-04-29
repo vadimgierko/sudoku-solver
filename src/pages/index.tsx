@@ -110,7 +110,7 @@ export default function Home() {
 								text="solve sudoku"
 								style={{ backgroundColor: "green", color: "white" }}
 								onClick={() => {
-									const solvedSudoku = solveSudoku(board);
+									const solvedSudoku = solveSudoku(board, []);
 									setBoard(solvedSudoku);
 								}}
 							/>

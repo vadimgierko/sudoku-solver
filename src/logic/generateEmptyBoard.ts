@@ -6,7 +6,7 @@ export default function generateEmptyBoard() {
 	for (let r = 0; r < 9; r++) {
 		board[r] = [];
 		for (let c = 0; c < 9; c++) {
-			const cell: Cell = {
+			board[r][c] = {
 				x: c,
 				y: r,
 				value: "",
@@ -15,8 +15,6 @@ export default function generateEmptyBoard() {
 				backgroundColor: "",
 				potentialCell: true,
 			};
-
-			board[r][c] = cell;
 		}
 	}
 	return board;
