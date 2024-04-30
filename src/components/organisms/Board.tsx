@@ -1,6 +1,6 @@
 import Square from "../atoms/Square";
 import Input from "../atoms/Input";
-import { Board as IBoard } from "@/types";
+import { AllowedValue, Board as IBoard, Mode } from "@/types";
 
 export default function Board({
 	board,
@@ -8,8 +8,8 @@ export default function Board({
 	setBoard,
 }: {
 	board: IBoard;
-	mode: "set" | "run";
-	setBoard: React.Dispatch<React.SetStateAction<IBoard | null>>;
+	mode: Mode;
+	setBoard: React.Dispatch<React.SetStateAction<IBoard>>;
 }) {
 	// generate borders for boxes:
 	function generateStyle(r: number, c: number) {
@@ -46,7 +46,7 @@ export default function Board({
 		return style;
 	}
 
-	function handleInputChange(value: string, r: number, c: number) {
+	function handleInputChange(value: AllowedValue, r: number, c: number) {
 		const updatedBoard = [...board];
 		updatedBoard[r] = [...updatedBoard[r]];
 		updatedBoard[r][c] = {
@@ -67,7 +67,7 @@ export default function Board({
 			</p>
 		);
 
-	if (mode && mode === "set")
+	if (mode === "set")
 		return (
 			<div className="board">
 				{board.map((row, r) => (

@@ -1,7 +1,9 @@
+export type AllowedValue = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+
 export interface Cell {
 	x: number;
 	y: number;
-	value: string;
+	value: AllowedValue | null;
 	potentialValues: string[];
 	color: string;
 	backgroundColor: string;
@@ -11,3 +13,5 @@ export interface Cell {
 export type Row = Cell[];
 
 export type Board = Row[];
+
+export type Mode = "set" | "run";
