@@ -1,4 +1,4 @@
-import { AllowedValue } from "@/types";
+import { AllowedValue, Cell } from "@/types";
 import { useState } from "react";
 
 export default function Input({
@@ -6,11 +6,11 @@ export default function Input({
 	onChange,
 	style,
 }: {
-	initValue: AllowedValue | null;
+	initValue: Cell["value"];
 	onChange: (value: AllowedValue) => void;
 	style: React.CSSProperties;
 }) {
-	const [value, setValue] = useState<AllowedValue | null>(initValue);
+	const [value, setValue] = useState<Cell["value"]>(initValue);
 
 	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
 		const value = e.target.value as AllowedValue;

@@ -1,4 +1,5 @@
-- rewrite the app in TypeScript
+- fix reamining digits after not solved sudoku
+- fix template sudokus to accept only AllowedValue || null & not the empty string!
 - add About page
 - generate more template sudokus
 - enable displaying all steps taken to solve sudoku & controlled setInterval to show the process
@@ -6,5 +7,4 @@
 - fix board size while completing the board & after saving (it must be same size & be in same place - no bouncing)
 - enable navigating using keybord while inputing numbers into the board
 - develop algorithms for more advanced sudokus
-- fix infinite loop while inputing numbers into the board (the bug does not crash the app, but still the loop runs while inputing, what can be seen in the console...)
 - develop algorithm for generating sudoku...
