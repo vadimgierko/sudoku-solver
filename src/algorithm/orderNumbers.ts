@@ -1,9 +1,10 @@
-import { Board, Cell } from "@/types";
+import { AllowedValue, Board, Cell } from "@/types";
 
 export default function orderNumbers(board: Board) {
-	const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+	const numbers: AllowedValue[] = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 	// find all known values:
-	let knownValues: Cell["value"][] = [];
+	let knownValues: AllowedValue[] = [];
+
 	board.forEach((row) =>
 		row.forEach((cell) => {
 			if (cell.value) {
@@ -13,7 +14,8 @@ export default function orderNumbers(board: Board) {
 	);
 	// create an array with objects for every number (1-9)
 	// to store a number of appereances of every number
-	let numbersAndTheirNum: { number: string; num: number }[] = [];
+	type NumObject = { number: AllowedValue; num: number };
+	let numbersAndTheirNum: NumObject[] = [];
 	numbers.forEach((number) =>
 		numbersAndTheirNum.push({
 			number: number,
@@ -36,7 +38,7 @@ export default function orderNumbers(board: Board) {
 	// (this will minimize the number of algorithm loops)
 	// ommit numbers which appears 9 times,
 	// because it means, that all of those numbers are discovered
-	let orderedNumbers: string[] = [];
+	let orderedNumbers: AllowedValue[] = [];
 	for (let i = 8; i >= 0; i--) {
 		numbersAndTheirNum.forEach((number) => {
 			if (number.num === i) {

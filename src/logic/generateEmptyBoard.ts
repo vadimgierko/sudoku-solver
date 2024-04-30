@@ -1,4 +1,4 @@
-import { Board, Cell, Row } from "@/types";
+import { Board } from "@/types";
 
 export default function generateEmptyBoard() {
 	let board: Board = [];
@@ -9,7 +9,7 @@ export default function generateEmptyBoard() {
 			board[r][c] = {
 				x: c,
 				y: r,
-				value: "",
+				value: null,
 				potentialValues: [],
 				color: "",
 				backgroundColor: "",

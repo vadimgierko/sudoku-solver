@@ -1,4 +1,4 @@
-import { Board, Cell } from "@/types";
+import { AllowedValue, Board, Cell } from "@/types";
 import generateBoxes from "../logic/generateBoxes";
 
 // eliminate existing numbers, rows, cols & boxes => find potential cells
@@ -7,7 +7,7 @@ import generateBoxes from "../logic/generateBoxes";
 // until there will be no single potential cells in boxes,
 // then return the fulfilled board & search for a next number
 
-export default function findNumber(number: string, board: Board) {
+export default function findNumber(number: AllowedValue, board: Board) {
 	let updatedBoard = [...board];
 	// reset board:
 	updatedBoard.forEach((row) => {

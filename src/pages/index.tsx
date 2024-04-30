@@ -19,7 +19,9 @@ import Button from "@/components/atoms/Button";
 import { TEMPLATE_SUDOKU_0 } from "@/template-sudoku/0";
 import { TEMPLATE_SUDOKU_1 } from "@/template-sudoku/1";
 import { TEMPLATE_SUDOKU_2 } from "@/template-sudoku/2";
-import { Board as IBoard } from "@/types";
+import { Board as IBoard, Mode } from "@/types";
+
+const EMPTY_BOARD = generateEmptyBoard();
 
 const TEMPLATE_SUDOKUS: IBoard[] = [
 	TEMPLATE_SUDOKU_0,
@@ -27,39 +29,28 @@ const TEMPLATE_SUDOKUS: IBoard[] = [
 	TEMPLATE_SUDOKU_2,
 ];
 
-export default function Home() {
-	const [mode, setMode] = useState<"set" | "run">("set");
-	const [board, setBoard] = useState<IBoard | null>(null);
-	const [todo, setTodo] = useState<string>("");
-	const [templateNum, setTemplateNum] = useState(0);
+const TODO_FOR_SET_MODE = `
+Populate the board with the numbers from sudoku you want to solve by inputing them into the cells.
+You can input only one number in one cell. Allowed numbers are: 1, 2, 3, 4, 5, 6, 7, 8, 9.
+When you finish, click the "save board" button below the board.
+`;
 
-	// init mode:
-	useEffect(() => {
-		let todo = ``;
-		if (mode === "set") {
-			todo = `
-				Populate the board with the numbers from sudoku you want to solve by inputing them into the cells.
-				You can input only one number in one cell. Allowed numbers are: 1, 2, 3, 4, 5, 6, 7, 8, 9.
-				When you finish, click the "save board" button below the board.
-			`;
-			const board = generateEmptyBoard();
-			console.log("Empty board was generated.");
-			setBoard(board);
-		} else {
-			todo = `
-				Click "solve sudoku" or "set next sudoku" button below the board.
-			`;
-			//console.log("run mode board:", JSON.stringify(board));
-		}
-		setTodo(todo);
-	}, [mode]);
+const TODO_FOR_RUN_MODE = `
+Click "solve sudoku" or "set next sudoku" button below the board.
+`;
+
+export default function Home() {
+	const [mode, setMode] = useState<Mode>("set");
+	const [board, setBoard] = useState<IBoard>(EMPTY_BOARD);
+	const [todo, setTodo] = useState(TODO_FOR_SET_MODE);
+	const [templateNum, setTemplateNum] = useState(0);
 
 	if (!board) return null;
 
 	return (
 		<>
 			<Head>
-				<title>Sudoku Solver | Vadim Gierko</title>
+				<title>Sudoku Solver by Vadim Gierko</title>
 				<meta
 					name="description"
 					content="This app solves an easy sudoku. Input known numbers into the board or load the template sudoku & press Solve Sudoku."
@@ -87,6 +78,7 @@ export default function Home() {
 											: templateNum + 1;
 									setTemplateNum(next);
 									setMode("run");
+									setTodo(TODO_FOR_RUN_MODE);
 								}}
 							/>
 							<Button
@@ -94,6 +86,7 @@ export default function Home() {
 								style={{ backgroundColor: "green", color: "white" }}
 								onClick={() => {
 									setMode("run");
+									setTodo(TODO_FOR_RUN_MODE);
 								}}
 							/>
 						</div>
@@ -104,6 +97,8 @@ export default function Home() {
 								text="set next sudoku"
 								onClick={() => {
 									setMode("set");
+									setBoard(EMPTY_BOARD);
+									setTodo(TODO_FOR_SET_MODE);
 								}}
 							/>
 							<Button
