@@ -50,7 +50,7 @@ export default function Home() {
 	return (
 		<>
 			<Head>
-				<title>Sudoku Solver by Vadim Gierko</title>
+				<title>Sudoku Solver | Custom Algorithm</title>
 				<meta
 					name="description"
 					content="This app solves an easy sudoku. Input known numbers into the board or load the template sudoku & press Solve Sudoku."

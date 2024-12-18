@@ -1,10 +1,18 @@
-- fix reamining digits after not solved sudoku
-- fix template sudokus to accept only AllowedValue || null & not the empty string!
-- add About page
-- generate more template sudokus
-- enable displaying all steps taken to solve sudoku & controlled setInterval to show the process
-- enable user control over the taken steps & choosing/ applying them
-- fix board size while completing the board & after saving (it must be same size & be in same place - no bouncing)
-- enable navigating using keybord while inputing numbers into the board
-- develop algorithms for more advanced sudokus
-- develop algorithm for generating sudoku...
+- ## general
+  - add About page
+  - generate more template sudokus
+- ## custom algorithm
+  - fix reamining digits after not solved sudoku
+  - fix template sudokus to accept only AllowedValue || null & not the empty string!
+  - enable displaying all steps taken to solve sudoku & controlled setInterval to show the process
+  - enable user control over the taken steps & choosing/ applying them
+  - fix board size while completing the board & after saving (it must be same size & be in same place - no bouncing)
+  - enable navigating using keybord while inputing numbers into the board
+  - ~~develop algorithms for more advanced sudokus~~
+  - develop algorithm for generating sudoku...
+- ## backtracking algorithm
+  - add same UI as for custom algo
+  - implement improvements to use backtracking algo only after prev checkings, like
+    - look for most filled rows, cols & 3*3 boxes and start from them
+    - start from the most frequent numbers
+    - or add backtraking algo only after custom cannot go futher
