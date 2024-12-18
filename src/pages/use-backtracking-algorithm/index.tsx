@@ -1,15 +1,44 @@
+import Button from "@/components/atoms/Button";
+import ToDo from "@/components/molecules/ToDo";
+import Header from "@/components/organisms/Header";
+import { Mode } from "@/types";
+import Head from "next/head";
 import { useEffect, useState } from "react";
 
-const TEMPLATE_BOARD: Board = [
-	[9, 0, 0, 0, 0, 0, 2, 5, 0],
-	[0, 0, 4, 0, 0, 7, 0, 9, 0],
-	[5, 2, 0, 0, 4, 0, 6, 0, 0],
-	[0, 6, 2, 0, 5, 9, 0, 3, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 4, 0, 8, 3, 0, 1, 2, 0],
-	[0, 0, 6, 0, 8, 0, 0, 7, 9],
-	[0, 7, 0, 6, 0, 0, 3, 0, 0],
-	[0, 9, 5, 0, 0, 0, 0, 0, 1],
+const TEMPLATE_SUDOKUS: Board[] = [
+	[
+		[9, 0, 0, 0, 0, 0, 2, 5, 0],
+		[0, 0, 4, 0, 0, 7, 0, 9, 0],
+		[5, 2, 0, 0, 4, 0, 6, 0, 0],
+		[0, 6, 2, 0, 5, 9, 0, 3, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 4, 0, 8, 3, 0, 1, 2, 0],
+		[0, 0, 6, 0, 8, 0, 0, 7, 9],
+		[0, 7, 0, 6, 0, 0, 3, 0, 0],
+		[0, 9, 5, 0, 0, 0, 0, 0, 1],
+	],
+	[
+		[0, 0, 6, 0, 4, 0, 2, 0, 0],
+		[0, 7, 0, 0, 0, 0, 0, 1, 0],
+		[9, 5, 0, 8, 0, 1, 0, 3, 4],
+		[8, 6, 0, 0, 0, 0, 0, 9, 7],
+		[0, 0, 0, 1, 0, 3, 0, 0, 0],
+		[5, 2, 0, 0, 0, 0, 0, 4, 3],
+		[3, 8, 0, 9, 0, 5, 0, 6, 2],
+		[0, 4, 0, 0, 0, 0, 0, 5, 0],
+		[0, 0, 5, 0, 2, 0, 7, 0, 0],
+	],
+	[
+		[0, 8, 0, 5, 0, 1, 0, 3, 0],
+		[0, 0, 6, 0, 0, 0, 7, 0, 0],
+		[0, 5, 0, 0, 4, 0, 0, 9, 0],
+		[0, 1, 3, 9, 0, 6, 4, 7, 0],
+		[0, 0, 4, 0, 0, 0, 6, 0, 0],
+		[0, 2, 7, 4, 0, 3, 8, 5, 0],
+		[0, 7, 0, 0, 5, 0, 0, 4, 0],
+		[0, 0, 8, 0, 0, 0, 5, 0, 0],
+		[0, 3, 0, 2, 0, 8, 0, 6, 0],
+	]
 ];
 
 type Board = number[][];
@@ -91,12 +120,7 @@ function findCellValue(board: Board, cords: Coords, potentialValue = 1) {
  * if no coords => generate solution (step) for nearest empty cell,
  * return step or undefined
  */
-function generateStep(
-	board: Board,
-	// prevStep?: Step,
-	potentialValue: number = 1,
-	coords?: Coords
-) {
+function generateStep(board: Board, potentialValue: number, coords?: Coords) {
 	const cellCords = coords || findEmptyCell(board);
 
 	if (!cellCords) {
@@ -117,26 +141,29 @@ function generateStep(
 	return step;
 }
 
+const TODO_FOR_SET_MODE = `
+Set mode is not implemented yet...
+`;
+
+const TODO_FOR_RUN_MODE = `
+Click "solve sudoku" or "set next sudoku" button below the board.
+`;
+
 export default function UseBacktrackingAlgorithmPage() {
-	const [isInit, setIsInit] = useState(true);
+	const [mode, setMode] = useState<Mode>("set");
+	const [todo, setTodo] = useState(TODO_FOR_SET_MODE);
+	const [templateNum, setTemplateNum] = useState(0);
+	const [isInit, setIsInit] = useState(false);
 	const [isSolved, setIsSolved] = useState(false);
 
-	const [board, setBoard] = useState<Board>(TEMPLATE_BOARD);
+	const [stepsCount, setStepsCount] = useState(0);
+
+	const [board, setBoard] = useState<Board>(TEMPLATE_SUDOKUS[templateNum]);
 
 	const [steps, setSteps] = useState<Step[]>([]);
-
-	// const board: Board = steps.length
-	// 	? TEMPLATE_BOARD.map((row, r) =>
-	// 			row.map((col, c) => {
-	// 				// Find the step that matches the current coordinates
-	// 				const step = steps.find((s) => s.coords.c === c && s.coords.r === r);
-	// 				return step ? step.value : TEMPLATE_BOARD[r][c];
-	// 			})
-	// 	  )
-	// 	: TEMPLATE_BOARD;
+	const [value, setValue] = useState(1);
 
 	const boardString = generateBoardString(board);
-	//const [currentCoords, setCurrentCoords] = useState(findEmptyCell(board));
 	const currentCoords = findEmptyCell(board);
 
 	useEffect(() => {
@@ -151,10 +178,11 @@ export default function UseBacktrackingAlgorithmPage() {
 				console.error("No current coords...");
 				setIsInit(false);
 				setIsSolved(true);
+				console.log("Final steps count:", stepsCount);
 				return;
 			}
 
-			const nextStep = generateStep(board, undefined, currentCoords);
+			const nextStep = generateStep(board, value, currentCoords);
 
 			if (nextStep) {
 				const updatedBoard: Board = board.map((row, r) =>
@@ -166,6 +194,8 @@ export default function UseBacktrackingAlgorithmPage() {
 				);
 				setBoard(updatedBoard);
 				setSteps((s) => [...s, nextStep]);
+				setValue(1);
+				setStepsCount((c) => (c += 1));
 			} else {
 				if (!prevStep) {
 					console.error("No next & no prev step...");
@@ -174,37 +204,116 @@ export default function UseBacktrackingAlgorithmPage() {
 					return;
 				}
 				// return to prev step and update value
-				// const lastStepUpdatedValue = findCellValue(
-				// 	board,
-				// 	{ r: prevStep.coords.r, c: prevStep.coords.c },
-				// 	prevStep.value + 1
-				// )
-
-				// if (!lastStepUpdatedValue) {
-				// 	console.error("Cannot update last step value...");
-				// 	setIsInit(false)
-				// 	setIsSolved(true)
-				// 	return
-				// }
 				// discard prevStep
 				const updatedBoard: Board = board.map((row, r) =>
 					row.map((col, c) =>
-						r === prevStep.coords.r && c === prevStep.coords.c ? 0 : c
+						r === prevStep.coords.r && c === prevStep.coords.c ? 0 : col
 					)
 				);
+				const updatedSteps = steps.filter((s, i) => i !== steps.length - 1);
+				const updatedPotentialValue = prevStep.value + 1;
 
-				// const updatedSteps: Step[] = steps.map((s, i) =>
-				// 	i === steps.length - 1 ? { ...s, value: findCellValue(updatedBoard, {r: prevStep.coords.r, c: prevStep.coords.c}, prevStep.value + 1) } : s
-				// );
+				setBoard(updatedBoard);
+				setSteps(updatedSteps);
+				setValue(updatedPotentialValue);
+				setStepsCount((c) => (c += 1));
 
-				// setSteps(updatedSteps);
+				// !!! coords remain the same, even they are recalculated, because last step is discarded & cell value = 0 again !!!
 			}
 		}
-	}, [board, currentCoords, isInit, isSolved, steps]);
+	}, [board, currentCoords, isInit, isSolved, steps, stepsCount, value]);
 
 	useEffect(() => {
 		console.log("steps", steps);
 	}, [steps]);
 
-	return <p dangerouslySetInnerHTML={{ __html: boardString }} />;
+	return <>
+		<Head>
+			<title>Sudoku Solver | Backtracking Algorithm</title>
+			<meta
+				name="author"
+				content="Vadim Gierko"
+			/>
+			<meta
+				name="description"
+				content="This app solves any given sudoku using backtracking algorithm."
+			/>
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<link rel="icon" href="/favicon.ico" />
+		</Head>
+		<div className="layout">
+			<Header
+				text="This sub-app is able to solve any sudoku of any level of complexity using my original backtracking algorithm."
+			/>
+			<main>
+				<ToDo todo={todo} />
+				{/* <p dangerouslySetInnerHTML={{ __html: boardString }} /> */}
+
+				<table>
+					{
+						board.map((row, r) =>
+							<tr key={`row-${r}`}>
+								{
+									row.map((col, c) => <td key={`col-${c}`}>{col === 0 ? "" : col}</td>)
+								}
+							</tr>)
+					}
+				</table>
+
+				{mode === "set" && (
+					<div className="set-mode-buttons">
+						<Button
+							text="load template sudoku"
+							onClick={() => {
+								const template = TEMPLATE_SUDOKUS[templateNum];
+								console.log("template:", template);
+								const next =
+									templateNum === TEMPLATE_SUDOKUS.length - 1
+										? 0
+										: templateNum + 1;
+								setTemplateNum(next);
+								setMode("run");
+								setTodo(TODO_FOR_RUN_MODE);
+								//================= reset state:
+								setIsInit(false);
+								setIsSolved(false);
+								setSteps([]);
+								setStepsCount(0);
+								setBoard(template);
+								setValue(1)
+							}}
+						/>
+						{/* <Button
+							text="save the board"
+							style={{ backgroundColor: "green", color: "white" }}
+							onClick={() => {
+								setMode("run");
+								setTodo(TODO_FOR_RUN_MODE);
+							}}
+						/> */}
+					</div>
+				)}
+				{mode === "run" && (
+					<div className="run-mode-buttons">
+						<Button
+							text="set next sudoku"
+							onClick={() => {
+								setMode("set");
+								setBoard(TEMPLATE_SUDOKUS[templateNum]);
+								setTodo(TODO_FOR_SET_MODE);
+							}}
+						/>
+						<Button
+							text="solve sudoku"
+							style={{ backgroundColor: "green", color: "white" }}
+							onClick={() => {
+								setIsInit(true);
+							}}
+						/>
+					</div>
+				)}
+			</main>
+
+		</div>
+	</>
 }
