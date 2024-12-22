@@ -10,6 +10,14 @@
 			name="description"
 			content="This app written in vanilla TypeScript solves any given sudoku."
 		/>
+		<!--
+			stylesheet is loaded here, not imported in main.js,
+			because I've added a few HTML elements outside the <div id="app" />
+			like header, footer etc. for SEO purposes
+			and those elements should be styled immediately to prevent flash of unstyled elements,
+			becuase they appear faster on the screen than rendered <div id="app" />
+		-->
+		<link rel="stylesheet" href="/src/style.css" />
 	</head>
 	<body>
 		<header>
@@ -22,7 +30,6 @@
 		</header>
 		<main>
 			<div id="app"></div>
-			<button id="solve-button">solve</button>
 		</main>
 		<footer>
 			<hr />
