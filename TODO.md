@@ -2,8 +2,6 @@
   - add About page
   - generate more template sudokus
 - ## custom algorithm
-  - fix reamining digits after not solved sudoku
-  - fix template sudokus to accept only AllowedValue || null & not the empty string!
   - enable displaying all steps taken to solve sudoku & controlled setInterval to show the process
   - enable user control over the taken steps & choosing/ applying them
   - fix board size while completing the board & after saving (it must be same size & be in same place - no bouncing)
