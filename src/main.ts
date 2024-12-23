@@ -1,68 +1,63 @@
 // import "./style.css";
 import { TEMPLATE_SUDOKUS } from "./TEMPLATE_DATA";
-import { Board, Coords, Step } from "./types";
+import { Step } from "./types";
 import algorithm from "./algorithm";
+import { appendChildToApp, getApp, removeChildFromApp } from "./components/app";
+import { createSolveButtonEl } from "./components/solveButton";
+import { createBoard, rerenderBoard } from "./components/board";
+import { createLoadNextTemplateButton } from "./components/loadNextTemplateButton";
 
-const BOARD_EL = document.getElementById("app");
+//======================== BOARD ==============================//
+// this enables updating only cell's textContent without getting this el by id first = optimization
+let CACHED_BOARD_CELLS_ELS: (HTMLElement | null)[][] = [];
 
-const SOLVE_BUTTON = document.createElement("button"); //document.getElementById("solve-button");
-SOLVE_BUTTON.id = "solve-button";
-SOLVE_BUTTON.textContent = "solve";
-
-function generateInitBoardHTMLString(board: Board): string {
-	let rowsHTMLString = "";
-	// populate rowsHTMLString
-	board.forEach((row, r) => {
-		let colsHTMLString = "";
-		row.forEach(
-			(col, c) =>
-				(colsHTMLString +=
-					`<td id=${"row-" + r + "-col-" + c}>` + (col ? col : "") + "</td>")
-		);
-		rowsHTMLString += `<tr id=${"row-" + r}>` + colsHTMLString + "</tr>";
-	});
-
-	const boardHTMLString = `
-	<table>
-		<tbody>
-			${rowsHTMLString}
-		</tbody>
-	</table>
-	`;
-
-	return boardHTMLString;
+function getAndCacheBoardCellsEls() {
+	// clear cache
+	CACHED_BOARD_CELLS_ELS = []
+	// update cache
+	for (let r = 0; r < 9; r++) {
+		CACHED_BOARD_CELLS_ELS.push([]);
+		for (let c = 0; c < 9; c++) {
+			const CELL_EL = document.getElementById(`row-${r}-col-${c}`);
+			if (CELL_EL) {
+				CACHED_BOARD_CELLS_ELS[r].push(CELL_EL)
+			}
+		}
+	}
 }
 
-function updateBoardCell(r: number, c: number, value: number) {
-	const CELL_EL = document.getElementById(`row-${r}-col-${c}`);
+function updateCachedBoardCellTextContent(r: number, c: number, value: number) {
+	const CELL_EL = CACHED_BOARD_CELLS_ELS[r][c];
 
-	if (!CELL_EL) return console.error("No such cell... r, c:", r, c);
-
-	CELL_EL.textContent = value.toString();
-}
-
-function renderInitBoard(board: Board) {
-	if (!BOARD_EL) return console.error("No BOARD_EL");
-
-	BOARD_EL.innerHTML = generateInitBoardHTMLString(board);
-
-	BOARD_EL.appendChild(SOLVE_BUTTON);
+	if (CELL_EL) {
+		CELL_EL.textContent = value ? value.toString() : ""
+	} else {
+		console.error("no such cell... cannot update...")
+	}
 }
 
 //================= INIT STATE =======================//
-
-// let mode: "set" | "run" = "set";
 let isSolved = false;
-let templateNum = 0;
+let templateNum = 1;
 let steps: Step[] = [];
 let stepsCount = 0;
 let board = TEMPLATE_SUDOKUS[templateNum];
-let currentCoords: Coords | null = algorithm.findEmptyCell(board);
+let currentCoords = algorithm.findEmptyCell(board);
 let value = 1;
 
-//=============== END OF INIT STATE ===================//
+/**
+ * ❗ should be used after templateNum was changed manually ❗
+ */
+function resetStateExceptTemplateNum() {
+	isSolved = false;
+	steps = [];
+	stepsCount = 0;
+	board = TEMPLATE_SUDOKUS[templateNum];
+	currentCoords = algorithm.findEmptyCell(board);
+	value = 1;
+}
 
-//================= SOLVING LOOP ======================//
+//==================== SOLVING LOOP =========================//
 function handleSolveButtonClick() {
 	/**
 	 * step = one fulfilled field
@@ -92,7 +87,7 @@ function handleSolveButtonClick() {
 			value = 1; // Reset value
 			stepsCount += 1;
 
-			updateBoardCell(nextStep.coords.r, nextStep.coords.c, nextStep.value);
+			updateCachedBoardCellTextContent(nextStep.coords.r, nextStep.coords.c, nextStep.value);
 		} else {
 			if (!prevStep) {
 				console.error("No next & no prev step...");
@@ -111,24 +106,44 @@ function handleSolveButtonClick() {
 
 			currentCoords = algorithm.findEmptyCell(board);
 
-			updateBoardCell(prevStep.coords.r, prevStep.coords.c, 0);
+			updateCachedBoardCellTextContent(prevStep.coords.r, prevStep.coords.c, 0);
 		}
 
 		// Use setTimeout to schedule the next step asynchronously
-		setTimeout(solveStep, 0);
+		setTimeout(solveStep);
 	}
 
 	solveStep();
 }
 
-function addListenerToSolveButton() {
-	if (!SOLVE_BUTTON) {
-		return console.error("There is no SOLVE_BUTTON...");
-	}
+//====================== INITIAL RUN ====================//
+function initRun() {
+	const APP_EL = getApp();
 
-	SOLVE_BUTTON.addEventListener("click", handleSolveButtonClick);
+	if (!APP_EL) return;
+
+	const BOARD = createBoard();
+	appendChildToApp(BOARD);
+	rerenderBoard(board);
+
+	const SOLVE_BUTTON = createSolveButtonEl(() => {
+		handleSolveButtonClick();
+		appendChildToApp(LOAD_NEXT_TEMPLATE_BUTTON);
+		removeChildFromApp(SOLVE_BUTTON);
+	});
+
+	const LOAD_NEXT_TEMPLATE_BUTTON = createLoadNextTemplateButton(() => {
+		templateNum = templateNum === TEMPLATE_SUDOKUS.length - 1 ? 0 : templateNum + 1;
+		resetStateExceptTemplateNum();
+		rerenderBoard(board);
+		getAndCacheBoardCellsEls();
+		appendChildToApp(SOLVE_BUTTON);
+		removeChildFromApp(LOAD_NEXT_TEMPLATE_BUTTON)
+	});
+
+	appendChildToApp(SOLVE_BUTTON);
+
+	getAndCacheBoardCellsEls();
 }
 
-// initial run:
-renderInitBoard(board); // after we will fulfill particular fields only
-addListenerToSolveButton();
+initRun();

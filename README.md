@@ -1,15 +1,14 @@
 # Sudoku Solver
 
-This app solves an easy sudoku.
+This app written in vanilla TypeScript solves any given sudoku using backtracking algorithm.
 
-⚠️ At the moment I&apos;m working on more advanced algorithm, which will be able to solve more comlicated sudoku.
+⚠️ At the moment I&apos;m working on implementing human-like solving algorithm before backtracking algorithm runs, to use it only when needed to optimize performance.
 
 ## Features
 
 - you can input known (init) numbers of sudoku you want to solve, save the board & click *solve* button
-- you can load template sudoku to test the app
+- template sudokus to test the app
 
 ## Tech Stack
 
-- React
-- Next.js
+- TypeScript
